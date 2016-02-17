@@ -7,7 +7,7 @@ The below questions should be answered regarding your submission!
 
 
 ##### Be sure and cite the sources for any visual or audio assets you used here! #####
-> I use the audio assets from the lecture...the Star Wars.
+> I use the audio assets from the lecture...the Star Wars. If you start or restart the game, you'll hear the light saber turns on. When you fling toward the white line, you'll hear 3 different saber swing audio on random, and when you fling away from the white line (which is restricted by ignoring the fling) you hear another different saber swing audio.
 
 
 ##### What model device did you test your application on? What SDK did you target? #####
