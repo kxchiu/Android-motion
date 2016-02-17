@@ -1,4 +1,4 @@
-package edu.uw.motiondemo;
+package edu.uw.cwc8.motiongame;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -27,7 +27,8 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
     private DrawingRunnable mRunnable; //the code htat we'll want to run on a background thread
     private Thread mThread; //the background thread
 
-    private Paint redPaint; //drawing variables (pre-defined for speed)
+    private Paint yellowPaint; //drawing variables (pre-defined for speed)
+    public Ball ball;
 
 
     /**
@@ -53,8 +54,10 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
         mRunnable = new DrawingRunnable();
 
         //set up drawing variables ahead of timme
-        redPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        redPaint.setColor(Color.RED);
+        yellowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        yellowPaint.setColor(Color.YELLOW);
+
+        ball = new Ball(100,100,100);
     }
 
 
@@ -63,7 +66,30 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
      */
     public void update(){
         //update the "game state" here (move things around, etc.
-        //TODO: fill in your own logic here!
+        ball.cx += ball.dx; //move
+        ball.cy += ball.dy;
+
+        //slow down
+        ball.dx *= 0.9;
+        ball.dy *= 0.9;
+
+        /* hit detection */
+        if(ball.cx + ball.radius > viewWidth) { //left bound
+            ball.cx = viewWidth - ball.radius;
+            ball.dx *= -1;
+        }
+        else if(ball.cx - ball.radius < 0) { //right bound
+            ball.cx = ball.radius;
+            ball.dx *= -1;
+        }
+        else if(ball.cy + ball.radius > viewHeight) { //bottom bound
+            ball.cy = viewHeight - ball.radius;
+            ball.dy *= -1;
+        }
+        else if(ball.cy - ball.radius < 0) { //top bound
+            ball.cy = ball.radius;
+            ball.dy *= -1;
+        }
     }
 
 
@@ -74,20 +100,19 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
     public void render(Canvas canvas){
         if(canvas == null) return; //if we didn't get a valid canvas for whatever reason
 
-        //TODO: replace the below example with your own rendering
+        canvas.drawBitmap(bmp, 0, 0, null); //and then draw the BitMap onto the canvas.
 
         canvas.drawColor(Color.BLACK); //black out the background
-        canvas.drawCircle(viewWidth/2.0f, viewHeight/2.0f, 100.0f, redPaint); //we can draw directly onto the canvas
-        //see http://developer.android.com/reference/android/graphics/Canvas.html for a list of options
 
+        canvas.drawCircle(ball.cx, ball.cy, ball.radius, yellowPaint); //we can draw directly onto the canvas
+
+        //draw 5 white lines of width 1 pixel
         for(int x=50; x<viewWidth-50; x++) { //most of the width
-            for(int y=100; y<110; y++) { //10 pixels high
-                bmp.setPixel(x, y, Color.BLUE); //we can also set individual pixels in a Bitmap (like a BufferedImage)
+            for(int y=250; y<260; y++) { //10 pixels high
+                bmp.setPixel(x, y, Color.WHITE); //we can also set individual pixels in a Bitmap (like a BufferedImage)
             }
         }
-        //Canvas bmc = new Canvas(bmp); //we can also make a canvas out of a Bitmap to draw on that (like fetching g2d from a BufferedImage)
-
-        canvas.drawBitmap(bmp,0,0,null); //and then draw the BitMap onto the canvas.
+        canvas.drawBitmap(bmp, 0, 0, null); //and then draw the BitMap onto the canvas.
     }
 
 
@@ -108,6 +133,9 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
             viewWidth = width;
             viewHeight = height;
             bmp = Bitmap.createBitmap(viewWidth, viewHeight, Bitmap.Config.ARGB_8888); //new buffer to draw on
+
+            //Remake ball
+            ball = new Ball(viewWidth/2, viewHeight, 100);
         }
     }
 
@@ -127,7 +155,6 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
         }
         Log.d(TAG, "Drawing thread shut down.");
     }
-
 
 
 
