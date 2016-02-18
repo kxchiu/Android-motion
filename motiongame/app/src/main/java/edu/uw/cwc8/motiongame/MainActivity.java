@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 view.ball.cx = view.getWidth() / 2;
                 view.ball.cy = view.getHeight();
                 playSound(0);
+                view.ball.flung = false;
             }
         });
     }
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Log.v(TAG, "" + event);
+        //Log.v(TAG, "" + event);
 
         boolean gesture = mDetector.onTouchEvent(event);
         if(gesture) return true;
@@ -111,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        //Log.v(TAG, "x=" + event.values[0] + ", y="+ event.values[1] +", z=" + event.values[2]);
+        Log.v(TAG, "x=" + event.values[0] + ", y="+ event.values[1] +", z=" + event.values[2]);
         gravityX = event.values[0];
         gravityY = event.values[1];
     }
@@ -186,15 +187,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             float scaleFactor = .01f;
 
+            view.ball.gx = gravityX;
+            view.ball.gy = gravityY;
+            view.ball.flung = true;
+
             //fling!
             Log.v(TAG, "Fling! " + velocityX + ", " + velocityY);
             if (velocityY < 0) {
-                view.ball.dx = velocityX * scaleFactor * (1 + gravityX * 0.05f);
-                view.ball.dy = velocityY * scaleFactor * (1 + gravityY * -0.05f);
-                Log.v(TAG, "" + songPick);
+                view.ball.dx = velocityX * scaleFactor * (1 + gravityX * 0.1f);
+                view.ball.dy = velocityY * scaleFactor * (1 + gravityY * -0.1f);
+                //Log.v(TAG, "" + songPick);
                 playSound(songPick);
-                Log.v(TAG, "" + view.ball.dx);
-                Log.v(TAG, "" + view.ball.dy);
+                Log.v(TAG, "Velocity x: " + view.ball.dx);
+                Log.v(TAG, "Velocity y: " + view.ball.dy);
             } else {
                 playSound(4);
             }

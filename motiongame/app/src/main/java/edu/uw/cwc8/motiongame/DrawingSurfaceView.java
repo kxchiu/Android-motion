@@ -57,7 +57,7 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
         yellowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         yellowPaint.setColor(Color.YELLOW);
 
-        ball = new Ball(100,100,100);
+        ball = new Ball(100, 100, 0, 0, 100, false);
     }
 
 
@@ -65,30 +65,35 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
      * Helper method for the "game loop"
      */
     public void update(){
-        //update the "game state" here (move things around, etc.
-        ball.cx += ball.dx; //move
-        ball.cy += ball.dy;
+        if(ball.flung == true){
+            //update the "game state" here (move things around, etc.
+            ball.cx += ball.dx; //move
+            ball.cy += ball.dy;
 
-        //slow down
-        ball.dx *= 0.9;
-        ball.dy *= 0.9;
+            Log.v(TAG, "center x: " + ball.cx);
+            Log.v(TAG, "center y: " + ball.cy);
+
+            //slow down
+            ball.dx *= 0.9 * (1 + ball.gx * 0.01f);
+            ball.dy *= 0.9 * (1 + ball.gy * 0.01f);
 
         /* hit detection */
-        if(ball.cx + ball.radius > viewWidth) { //left bound
-            ball.cx = viewWidth - ball.radius;
-            ball.dx *= -1;
-        }
-        else if(ball.cx - ball.radius < 0) { //right bound
-            ball.cx = ball.radius;
-            ball.dx *= -1;
-        }
-        else if(ball.cy + ball.radius > viewHeight) { //bottom bound
-            ball.cy = viewHeight - ball.radius;
-            ball.dy *= -1;
-        }
-        else if(ball.cy - ball.radius < 0) { //top bound
-            ball.cy = ball.radius;
-            ball.dy *= -1;
+            if(ball.cx + ball.radius > viewWidth) { //left bound
+                ball.cx = viewWidth - ball.radius;
+                ball.dx *= -1;
+            }
+            else if(ball.cx - ball.radius < 0) { //right bound
+                ball.cx = ball.radius;
+                ball.dx *= -1;
+            }
+            else if(ball.cy + ball.radius > viewHeight) { //bottom bound
+                ball.cy = viewHeight - ball.radius;
+                ball.dy *= -1;
+            }
+            else if(ball.cy - ball.radius < 0) { //top bound
+                ball.cy = ball.radius;
+                ball.dy *= -1;
+            }
         }
     }
 
@@ -135,7 +140,7 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
             bmp = Bitmap.createBitmap(viewWidth, viewHeight, Bitmap.Config.ARGB_8888); //new buffer to draw on
 
             //Remake ball
-            ball = new Ball(viewWidth/2, viewHeight, 100);
+            ball = new Ball(viewWidth/2, viewHeight - 100, 0, 0, 100, false);
         }
     }
 

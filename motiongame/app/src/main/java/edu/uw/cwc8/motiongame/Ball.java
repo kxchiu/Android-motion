@@ -10,13 +10,19 @@ public class Ball {
     public float radius; //radius
     public float dx; //velocity
     public float dy;
+    public float gx; //gravity/acceleration
+    public float gy;
+    public boolean flung;
 
-    public Ball(float cx, float cy, float radius) {
+    public Ball(float cx, float cy, float gx, float gy, float radius, boolean flung) {
         this.cx = cx;
         this.cy = cy;
         this.radius = radius;
         this.dx = 0;
         this.dy = 0;
+        this.gx = 0;
+        this.gy = 0;
+        this.flung = false;
     }
 
     public float getRadius() {
